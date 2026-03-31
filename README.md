@@ -16,9 +16,9 @@ Think of each skill as a cheat sheet that turns a 53-tool-call fumbling session 
 
 ## Available Skills
 
-| Skill | Platform | Status | Download |
-|-------|----------|--------|----------|
-| [tiktok-browser](./skills/tiktok-browser/) | TikTok | v0.1 | [⬇ .skill](https://github.com/zuocharles/Claude-Cowork-Social-Media-Skills/releases/latest/download/tiktok-browser.skill) |
+| Skill | Platform | Status |
+|-------|----------|--------|
+| [tiktok-browser](./skills/tiktok-browser/) | TikTok | v0.1 |
 
 ## Requirements
 
@@ -28,24 +28,7 @@ Think of each skill as a cheat sheet that turns a 53-tool-call fumbling session 
 
 ## Installation
 
-### For Claude Cowork (Recommended)
-
-**Option A: Download the .skill package (easiest)**
-
-1. Go to the [latest release](https://github.com/zuocharles/Claude-Cowork-Social-Media-Skills/releases/latest)
-2. Download the `.skill` file (e.g., `tiktok-browser.skill`)
-3. In Claude Desktop, go to **Customize → Skills → click `+` → "Upload a skill"**
-4. Select the downloaded `.skill` file
-5. The skill is now available in all your Cowork sessions
-
-**Option B: Copy-paste the skill instructions**
-
-1. Open the [`SKILL.md`](./skills/tiktok-browser/SKILL.md) file in this repo
-2. Copy the full contents
-3. In Claude Desktop, go to **Customize → Skills → click `+` → "Write skill instructions"**
-4. Paste the contents and save
-
-### For Claude Code
+### For Claude Code / Cowork
 
 Copy the skill folder into your skills directory:
 
@@ -55,9 +38,9 @@ cp -r skills/tiktok-browser ~/.claude/skills/
 
 Or add the skill path to your Claude configuration.
 
-### For Claude in Chrome Extension
+### For Claude in Chrome
 
-The skill can be referenced in your Chrome extension shortcuts or workflows. Load the SKILL.md content into Claude's context when starting a browsing task.
+The skill works automatically when loaded into Claude's context. You can reference it in your Chrome extension shortcuts or workflows.
 
 ## How Skills Work
 
@@ -68,13 +51,6 @@ Each skill is a `SKILL.md` file that Claude reads before performing tasks on a p
 3. **URL Patterns** — direct navigation shortcuts to skip clicking through menus
 4. **Common Pitfalls** — known issues and how to recover from them
 5. **Workflow Guides** — step-by-step approaches for common tasks
-
-## Packaging & Releases
-
-Each skill is released as a `.skill` file (a zip archive of the skill directory containing `SKILL.md` and any reference files). Download from the [Releases](https://github.com/zuocharles/Claude-Cowork-Social-Media-Skills/releases) page.
-
-- **Individual skills**: Download the `.skill` file for the platform you need
-- **All skills bundle**: When multiple platform skills are available, a `.plugin` bundle will be provided for one-click installation of everything
 
 ## Roadmap
 

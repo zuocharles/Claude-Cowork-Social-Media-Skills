@@ -47,7 +47,6 @@ hunting for view counts in places they don't exist:
 | Video detail/overlay | Likes, comments, saves, shares | View counts |
 | Creator profile page | **View counts on thumbnails**, video grid | Per-video saves/shares |
 | For You feed | Likes, comments, saves, shares | View counts |
-| Video page (via JS) | playCount, diggCount (likes), commentCount, shareCount, collectCount (saves), createTime, description, hashtags, AI-generated label, author info | N/A — this gives you EVERYTHING |
 
 **The only place to get view counts is on a creator's profile page**, where they
 appear overlaid on video thumbnails. If a user asks for videos with X+ views and
@@ -72,43 +71,6 @@ TikTok displays a **"Creator labeled as AI-generated"** badge on some videos.
 This appears below the hashtags on the video detail page. It's useful when
 researching AI-generated content trends — look for this badge to confirm a video
 is AI-made rather than guessing from visual style alone.
-
-### Extracting Exact Stats via JavaScript (Recommended)
-
-TikTok embeds all video metadata in a global JavaScript variable on every video page. This is the **most reliable and efficient** way to get exact stats — no need to parse the UI or navigate to profile pages.
-
-On any video page (`/@username/video/videoId`), run this via `javascript_tool`:
-
-```javascript
-const item = window['__$UNIVERSAL_DATA$__']['__DEFAULT_SCOPE__']['webapp.video-detail']?.itemInfo?.itemStruct;
-JSON.stringify({
-  id: item?.id,
-  author: item?.author?.uniqueId,
-  desc: item?.desc,
-  createTime: item?.createTime,
-  stats: item?.stats,            // { playCount, diggCount, commentCount, shareCount, collectCount }
-  challenges: item?.challenges?.map(c => c.title),  // hashtags
-  aigcLabelType: item?.aigcLabelType,                // AI-generated label
-  diversificationLabels: item?.diversificationLabels  // content categories
-}, null, 2)
-```
-
-**What you get:**
-- `stats.playCount` — exact view count (not an estimate!)
-- `stats.diggCount` — likes
-- `stats.commentCount` — comments
-- `stats.shareCount` — shares
-- `stats.collectCount` — saves/favorites
-- `createTime` — Unix timestamp of when the video was posted
-- `challenges` — hashtags used
-- `aigcLabelType` — whether the video is labeled as AI-generated
-
-**When to use this vs. the like-to-view heuristic:**
-- Use **JavaScript extraction** when the user needs exact numbers or you're already on/navigating to individual video pages
-- Use the **like-to-view heuristic** when scanning search results quickly and exact counts aren't needed
-- Use **profile page thumbnails** when you need view counts for many videos by the same creator at once
-
-**Batch strategy:** When verifying stats for multiple videos from search results, you can navigate to each video URL and run the JS snippet. Each call gives you exact stats in one tool call — much faster than trying to read them from the UI.
 
 ## Page Structures
 
@@ -257,24 +219,12 @@ If the direct URL doesn't work (rare), fall back to:
 
 ### Getting View Counts
 
-**Method 1: JavaScript extraction (fastest, exact)**
+Since view counts only appear on profile pages:
 
-Navigate to any video page and run via `javascript_tool`:
-```javascript
-const stats = window['__$UNIVERSAL_DATA$__']['__DEFAULT_SCOPE__']['webapp.video-detail']?.itemInfo?.itemStruct?.stats;
-JSON.stringify(stats)
-// Returns: { playCount, diggCount, commentCount, shareCount, collectCount }
-```
-
-**Method 2: Creator profile thumbnails (good for browsing one creator's catalog)**
-
-1. Navigate to `https://www.tiktok.com/@{username}`
-2. Wait for the video grid to load (thumbnails show view counts)
-3. The "Popular" sort button can help surface highest-viewed content
-
-**Method 3: Like-to-view heuristic (good for quick scanning search results)**
-
-Use the ratio from the "Like-to-View Ratio Heuristic" section above — no navigation needed.
+1. From a video overlay or search results, note the creator's username
+2. Navigate to `https://www.tiktok.com/@{username}`
+3. Wait for the video grid to load (thumbnails show view counts)
+4. The "Popular" sort button can help surface highest-viewed content
 
 ### Collecting Video Links
 
