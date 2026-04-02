@@ -216,18 +216,35 @@ If a Google Maps MCP server is connected, use it for all of the following:
 - **static-map** at candidate coordinates to visually compare terrain/layout
 - **elevation** to verify terrain profile
 
-#### Tool Tier B: Claude in Chrome extension (if no MCP)
-If no Maps MCP is connected but the Claude in Chrome extension is available, use it to
-navigate Google Maps directly in the browser:
+#### Tool Tier B: Claude in Chrome extension (visual browser — best for map verification)
+If no Maps MCP is connected but `Claude in Chrome` tools are available (`navigate`, `read_page`,
+`find`, `upload_image`), use them to visually verify candidates in Google Maps:
 1. Go to `https://www.google.com/maps` and switch to Satellite view
-2. Navigate to each candidate location
-3. Use the Overpass Turbo query interface at `https://overpass-turbo.eu` to run spatial queries
-   combining multiple observable features (e.g., lake shape + housing density + road layout)
+2. Navigate to each candidate location and visually compare layout against source image
+3. Use `https://overpass-turbo.eu` to run spatial queries combining observable features
 4. Drop Street View pegman at candidate coordinates to confirm ground-level details
 
-#### Tool Tier C: Web Search (always available — always use it)
-WebSearch is available in every session. **Always run at least 2-3 searches before writing
-the final answer.** Good search patterns for photos with no readable text:
+Claude in Chrome can SEE the map — it can read satellite imagery and Street View visually.
+This is the preferred browser tool for visual confirmation.
+
+#### Tool Tier B2: Control Chrome (navigation only — limited verification)
+`Control Chrome` tools (`open_url`, `get_page_content`, `execute_javascript`) are available in
+Claude Code CLI sessions. They can open URLs and retrieve text/HTML but **cannot visually see
+satellite imagery or Street View**. Do NOT attempt visual map verification with Control Chrome —
+it will return raw JavaScript and tile URLs, not useful information.
+
+What Control Chrome CAN do for geolocation:
+- Fetch the Overpass Turbo API directly: `https://overpass-api.de/api/interpreter?data=[query]`
+- Fetch OpenStreetMap place search: `https://nominatim.openstreetmap.org/search?q=[place]&format=json`
+- Fetch fishing report pages, local forum threads, or community websites for the candidate area
+- Execute JavaScript to parse JSON responses from mapping APIs
+
+Use these fetch-based approaches instead of trying to visually verify maps.
+
+#### Tool Tier C: Web Search (use if available — check first)
+WebSearch is available in Cowork sessions but NOT in all Claude Code CLI sessions. Before
+assuming it's available, check your tool list. If WebSearch is present, **always run at least
+2-3 searches before writing the final answer.** Good search patterns for photos with no readable text:
 
 - Combine the most specific observable features: `"small retention lake" "townhouses" Florida subdivision`
 - Add distinctive visual details: `Florida HOA community lake "row houses" side-by-side no yard`
@@ -273,12 +290,31 @@ candidates without a final answer is not acceptable. If you are uncertain betwee
 pick the one with more supporting evidence and state your confidence level — do not leave it
 open-ended.
 
+#### What counts as a NON-ANSWER (do not stop here):
+
+- **A river name alone** — "Sheyenne River" or "a Wisconsin trout stream" covers hundreds of
+  miles. This is Level 3. You have NOT finished. You must execute the Level 5 pinpointing
+  workflow (satellite scan, bridge anchor, linear scan) to find the specific segment, bend,
+  pool, or access point.
+- **A lake name alone** — "Lake Nona" or "a retention pond in Orlando" covers an entire water
+  body or region. This is Level 3. You must find the specific bank, access point, and coordinates.
+- **A city or county name alone** — "Osceola County, FL" is Level 3. Keep going.
+- **A list of candidate communities** — this is Step 2 output, not Step 5. If you find yourself
+  listing multiple candidates, you have not yet done Step 3.
+
+#### Minimum acceptable answer specificity:
+- **River/stream**: Named crossing, bridge, pool, or bend + coordinates. Example: "Sheyenne
+  River at 8th Ave NE bridge, Valley City, ND — 46.921°N 98.007°W"
+- **Lake/pond**: Specific bank and access point + coordinates. Example: "NW shore of unnamed
+  HOA retention pond, Storey Park, Orlando FL — 28.371°N -81.187°W"
+- **Urban/suburban**: Street address or nearest intersection + coordinates.
+
 Present your answer in this format:
 
 ```
 ## Location
 
-**Address / Place**: [Specific address, community name, or nearest intersection]
+**Specific Place**: [Named crossing / pool / access point / address — NOT just a river or lake name]
 **Coordinates**: [lat, lon] ← REQUIRED. Always include, even if confidence is low.
 **Confidence**: [High / Medium / Low] + one sentence explaining why
 
